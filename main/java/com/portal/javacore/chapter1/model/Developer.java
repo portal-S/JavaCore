@@ -8,6 +8,23 @@ public class Developer {
     private String lastName;
     private List<Skill> skills;
 
+    public Developer(int id, String firstName, String lastName, List<Skill> skills) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.skills = skills;
+    }
+
+    @Override
+    public String toString() {
+        return "Developer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", skills=" + skills +
+                '}';
+    }
+
     public int getId() {
         return id;
     }

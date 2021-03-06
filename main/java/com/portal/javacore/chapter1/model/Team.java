@@ -6,6 +6,24 @@ public class Team {
     private int id;
     private String name;
     private List<Developer> posts;
+    private TeamStatus status;
+
+    public Team(int id, String name, List<Developer> posts, TeamStatus status) {
+        this.id = id;
+        this.name = name;
+        this.posts = posts;
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", posts=" + posts +
+                ", status=" + status +
+                '}';
+    }
 
     public int getId() {
         return id;
