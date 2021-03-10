@@ -16,10 +16,8 @@ public class Main {
             while (scanner.hasNext()){
                 if(!validCmd(scanner.nextLine())) System.err.println("Error: invalid data type");
             }
-
         }
     }
-
     private static boolean validCmd(String str){
         String[] cmd = str.split(" ");
         switch (cmd[0]){

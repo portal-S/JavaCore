@@ -8,8 +8,13 @@ import com.portal.javacore.chapter1.util.Dirs;
 import com.portal.javacore.chapter1.util.Utils;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JavaIODeveloperRepositoryImpl implements DeveloperRepository {
 
@@ -35,13 +40,11 @@ public class JavaIODeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public Developer getOne(Integer integer) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(DIR))) {
-            String line = reader.readLine();
-            while (line != null){
-                String[] names = Utils.getName(line).split(";");
-                if(Utils.isId(integer, line)) return new Developer(integer, names[0], names[1], getSkills(line.split("/")[2]));
-                line = reader.readLine();
-            }
+        try {
+           return Files.lines(new File(DIR).toPath()).filter(s -> Utils.isId(integer, s)).map(s ->{
+               String[] names = Utils.getName(s).split(";");
+               return new Developer(integer, names[0], names[1], getSkills(s.split("/")[2]));
+           }).findAny().get();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,6 +53,7 @@ public class JavaIODeveloperRepositoryImpl implements DeveloperRepository {
 
     @Override
     public Developer create(Developer obj) {
+
         List<String> info = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(DIR))) {
             String line = reader.readLine();
@@ -84,6 +88,7 @@ public class JavaIODeveloperRepositoryImpl implements DeveloperRepository {
                 if(!Utils.isId(obj.getId(), line)) info.add(line);
                 else {
                     StringBuilder add = new StringBuilder(obj.getId() + "/" + obj.getFirstName() + ";" + obj.getLastName() + "/");
+
                     for(Skill s : obj.getSkills()){
                         add.append(s.getId() + ",");
                     }
@@ -104,13 +109,10 @@ public class JavaIODeveloperRepositoryImpl implements DeveloperRepository {
     }
 
     public List<Skill> getSkills(String skills){
-        List<Skill> skillList = new ArrayList<>();
-        for(String skill : skills.split(",")){
-            int id = Integer.valueOf(skill);
-            for (Skill skill1 :  skillRepository.findAll()){
-                if(skill1.getId() == id) skillList.add(skill1);
-            }
-        }
-        return skillList;
+        return Arrays.stream(skills.split(",")).map(e -> {
+            return skillRepository.findAll().stream().filter(s -> s.getId() == Integer.valueOf(e)).findAny().get();
+        } ).collect(Collectors.toList());
     }
 }
+
+
